@@ -1,27 +1,17 @@
+import sys
+input = sys.stdin.readline
+
 N = int(input())
 arr = [[0,0]]
 for _ in range(N):
     arr.append(list(map(int, input().split())))
-dp = [[0,0] for _ in range(N+1)]
-# 첫번재 인덱스에는 가능인덱스
-# 두번째 인덱스에는 최댓값
+dp = [0 for _ in range(N+2)]
 
-for i in range(1, N+1): # i번째 요소를 채움. dp[i] 를 구함
-    for j in range(i): # 그 이전것들이랑 비교함
-        if (i+arr[i][0]) <= N+1:
-            if dp[j][0] <= i: # 가능하면 지금꺼랑 내꺼 추가한거 비교
-                if dp[i][1] < dp[j][1] + arr[i][1]:
-                    dp[i][1] = dp[j][1] + arr[i][1]
-                    dp[i][0] = i + arr[i][0]
+for i in range(1, N+2):
+    dp[i] = max(dp[i-1], dp[i]) # dp[i-1] 은 과거의 최고 기록 !! # dp[i] 는 그날 끝난 상담의 기록값
+    # 그리고 이제 내 상담 갱신
+    if i<N+1 and arr[i][0]+i <= N+1: # 가능하면
+        idx = arr[i][0]+i
+        dp[idx] = max(dp[idx], dp[i]+arr[i][1])
 
-            else: # 불가능하면 지금꺼랑 그 안추가한거 비교
-                if dp[i][1] < arr[i][1]:
-                    dp[i][1] = arr[i][1]
-                    dp[i][0] = i + arr[i][0]
-        else:
-            if dp[i][1] < dp[j][1]:
-                dp[i][1] = dp[j][1]
-                dp[i][0] = dp[i][1]
-    # print(dp)
-
-print(dp[-1][-1])
+print(dp[-1])
